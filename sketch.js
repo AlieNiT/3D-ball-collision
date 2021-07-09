@@ -44,20 +44,24 @@ function update(dt) {
 
 function resolveCollsion(b1, b2) {
   if (b1.m == 0 && b2.m == 0) return;
-
-  let v_n = createVector(b2.position.x - b1.position.x, b2.position.y - b1.position.y); // v_n = normal vec. - a vector normal to the collision surface
+  
+  let v_n = subtract(b2.position, b1.position); // v_n = normal vec. - a vector normal to the collision surface
   let v_un = unitVector(v_n);
-  let v_ut = createVector(-v_un.y, v_un.x); // unit tangent vector
+  // let v_ut = createVector(-v_un.y, v_un.x); // unit tangent vector
 
   // Compute scalar projections of velocities onto v_un and v_ut
   let v1n = dotProduct(v_un, b1.velocity); // Dot product
-  let v1t = dotProduct(v_ut, b1.velocity);
   let v2n = dotProduct(v_un, b2.velocity);
-  let v2t = dotProduct(v_ut, b2.velocity);
+  let v1t = subtract(b1.velocity, scalarMult(v1n, v_un)); // vector
+  let v2t = subtract(b2.velocity, scalarMult(v2n, v_un)); // vector
+
+  if (v1n - v2n < 0)
+    return;
+
 
   // Compute new tangential velocities
-  v1tPrime = v1t; // Note: in reality, the tangential velocities do not change after the collision
-  v2tPrime = v2t;
+  v_v1tPrime = v1t; // Note: in reality, the tangential velocities do not change after the collision
+  v_v2tPrime = v2t;
 
   // Compute new normal velocities using one-dimensional elastic collision equations in the normal direction
   // Division by zero avoided. See early return above.
@@ -66,20 +70,26 @@ function resolveCollsion(b1, b2) {
 
   // Compute new normal and tangential velocity vectors
   v_v1nPrime = scalarMult(v1nPrime, v_un); // Multiplication by a scalar
-  v_v1tPrime = scalarMult(v1tPrime, v_ut);
   v_v2nPrime = scalarMult(v2nPrime, v_un);
-  v_v2tPrime = scalarMult(v2tPrime, v_ut);
 
-  b1.velocity.x = v_v1nPrime.x + v_v1tPrime.x;
-  b1.velocity.y = v_v1nPrime.y + v_v1tPrime.y;
-  b2.velocity.x = v_v2nPrime.x + v_v2tPrime.x;
-  b2.velocity.y = v_v2nPrime.y + v_v2tPrime.y;
+  b1.velocity = add(v_v1nPrime, v_v1tPrime);
+  b2.velocity = add(v_v2nPrime, v_v2tPrime);
+
 }
 
 function distance(vect1, vect2) {
-  return Math.sqrt((vect1.x - vect2.x) * (vect1.x - vect2.x) +
-                   (vect1.y - vect2.y) * (vect1.y - vect2.y) +
-                   (vect1.z - vect2.z) * (vect1.z - vect2.z));
+  return Math.sqrt( 
+  (vect1.x - vect2.x) * (vect1.x - vect2.x) +
+  (vect1.y - vect2.y) * (vect1.y - vect2.y) +
+  (vect1.z - vect2.z) * (vect1.z - vect2.z))
+}
+
+function subtract(v1, v2) {//v1-v2
+  return createVector(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
+}
+
+function add(v1, v2) {
+  return createVector(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z)
 }
 
 function unitVector(vector) {
