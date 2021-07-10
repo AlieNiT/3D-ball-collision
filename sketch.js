@@ -4,7 +4,7 @@ const boxSize = 200;
 const FONT_SIZE = 18;
 let theBox;
 let pageData;
-let time = 0;
+let restTime = 0;
 let dt = 0.1;
 let gravity = -1;
 
@@ -41,16 +41,19 @@ function draw() {
 	noStroke();
 	ambientMaterial(255, 100, 0);
 	theBox.showBalls();
-	theBox.wallCollision();
-	theBox.ballCollisionCheck();
 	pop();
 
-	update(0.1);
+	update();
 }
 
-function update(dt) {
-	theBox.update();
-	//call other object update;
+function update() {
+	restTime += deltaTime;
+	for (let i = 0; i < restTime / 10; restTime -= 10) {
+		// try to calculate 100 times per sec
+		theBox.wallCollision();
+		theBox.ballCollisionCheck();
+		theBox.update();
+	}
 }
 
 function createStatusBar() {
