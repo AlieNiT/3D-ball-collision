@@ -5,11 +5,10 @@ const FONT_SIZE = 18;
 let theBox;
 let pageData;
 let restTime = 0;
-let dt = 0.1;
-let gravity = -1;
+let GRAVITY = -0.1;
 
 function preload() {
-	pageFont = loadFont("assets/Castoro-Regular.ttf");
+	pageFont = loadFont("./assets/Castoro-Regular.ttf");
 }
 
 function setup() {
@@ -18,13 +17,13 @@ function setup() {
 
 	theBox = new Box(createVector(0, 0, 0), createVector(boxSize, boxSize, boxSize));
 	// add some ball to box
-	theBox.balls.push(new Ball(createVector(0, 0, 0), createVector(10, 20, 0), 20, 2));
-	theBox.balls.push(new Ball(createVector(10, 60, 20), createVector(10, 10, 20), 20, 2));
-	theBox.balls.push(new Ball(createVector(20, 50, -20), createVector(10, 10, 20), 20, 2));
-	theBox.balls.push(new Ball(createVector(30, 40, 40), createVector(10, 10, 20), 20, 2));
-	theBox.balls.push(new Ball(createVector(40, 30, -40), createVector(30, 20, 30), 20, 2));
-	theBox.balls.push(new Ball(createVector(50, 20, 60), createVector(10, 10, 20), 20, 2));
-	theBox.balls.push(new Ball(createVector(60, 10, -60), createVector(10, 10, 20), 20, 2));
+	theBox.balls.push(new Ball(createVector(0, 0, 0),     createVector(1, 2, 0), 20, 2));
+	theBox.balls.push(new Ball(createVector(10, 60, 20),  createVector(1, 1, 2), 20, 2));
+	theBox.balls.push(new Ball(createVector(20, 50, -20), createVector(1, 1, 2), 20, 2));
+	theBox.balls.push(new Ball(createVector(30, 40, 40),  createVector(1, 1, 2), 20, 2));
+	theBox.balls.push(new Ball(createVector(40, 30, -40), createVector(3, 2, 3), 20, 2));
+	theBox.balls.push(new Ball(createVector(50, 20, 60),  createVector(1, 1, 2), 20, 2));
+	theBox.balls.push(new Ball(createVector(60, 10, -60), createVector(1, 1, 2), 20, 2));
 }
 
 function draw() {
@@ -152,11 +151,11 @@ class Box {
 	update() {
 		for (let i = 0; i < this.balls.length; i++)
 		{
-			this.balls[i].velocity.y -= gravity;
+			this.balls[i].velocity.y -= GRAVITY;
 
-			this.balls[i].position.x += this.balls[i].velocity.x * dt;
-			this.balls[i].position.y += this.balls[i].velocity.y * dt;
-			this.balls[i].position.z += this.balls[i].velocity.z * dt;
+			this.balls[i].position.x += this.balls[i].velocity.x;
+			this.balls[i].position.y += this.balls[i].velocity.y;
+			this.balls[i].position.z += this.balls[i].velocity.z;
 		}
 	}
 
